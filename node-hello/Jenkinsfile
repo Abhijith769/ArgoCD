@@ -33,28 +33,10 @@ pipeline {
         stage('Pushing to ECR') {
             steps {
                 script {
-                    // Print environment variables
-                    sh 'printenv'
-
-                    def branchName = env.BRANCH_NAME
-                    def jobId = env.BUILD_ID
-                    def commitId = env.GIT_COMMIT
-
-                    def tag = "${branchName}_${IMAGE_NAME}_${IMAGE_TAG}_${jobId}_${commitId}"
-
-                    // Additional tag for stage
-                    def additionalTag = "${branchName}_${IMAGE_NAME}"
-
-                    // Push to kpi-website ECR repository for both main and stage branches
+                    // Push to x-non-prod ECR repository for both main and stage branches
                     sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${tag}"
-                    sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${additionalTag}"
-                    
-                    sh "docker push ${REPOSITORY_URI}:${tag}"
-                    sh "docker push ${REPOSITORY_URI}:${additionalTag}"
 
-                    // Output job ID and Commit ID
-                    echo "Job ID: ${jobId}"
-                    echo "Commit ID: ${commitId}"
+                    sh "docker push ${REPOSITORY_URI}:${tag}"
                 }
             }
         }
