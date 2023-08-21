@@ -62,8 +62,8 @@ pipeline {
 }
 
 def getAgentLabel() {
-    if (env.BRANCH_NAME == 'stage') {
-        return 'kpi-web-stage'
+    if (env.BRANCH_NAME == 'main') {
+        return 'jenkns-slave'
     } else (env.BRANCH_NAME == 'prod') {
         return 'kpi-web-prod'
     }
