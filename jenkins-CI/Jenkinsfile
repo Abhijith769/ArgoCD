@@ -5,11 +5,11 @@ pipeline {
         AWS_DEFAULT_REGION="ap-south-1"
         IMAGE_REPO_NAME="x-non-prod-ecr"
         IMAGE_NAME="x-app"
-        REPOSITORY_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
-        BRANCH=getBranch()
-        DEPLOY_TAG="${BRANCH}_${GIT_COMMIT}"
-        CONTAINER_IMAGE="${REPOSITORY_URI}:${DEPLOY_TAG}"
+        IMAGE_TAG="latest"
+        
+        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
+
     stages {
         // Logging into AWS ECR
         stage('Logging into AWS ECR') {
@@ -23,9 +23,9 @@ pipeline {
         // Building Docker images
         stage('Building image') {
             steps {
-                dir('.') {
-                    sh "docker build -t ${IMAGE_NAME}:${BRANCH} . "
-                    }
+                script {
+                    dockerImage = docker.build "${IMAGE_NAME}:${IMAGE_TAG}", "--file website/Dockerfile ."
+                }
             }
         }
 
@@ -33,10 +33,38 @@ pipeline {
         stage('Pushing to ECR') {
             steps {
                 script {
-                    sh "docker tag ${IMAGE_NAME}:${BRANCH} ${CONTAINER_IMAGE}"
-                    sh "docker push ${CONTAINER_IMAGE}"
+                    // Print environment variables
+                    sh 'printenv'
+
+                    def branchName = env.BRANCH_NAME
+                    def jobId = env.BUILD_ID
+                    def commitId = env.GIT_COMMIT
+
+                    def tag = "${branchName}_${IMAGE_NAME}_${IMAGE_TAG}_${jobId}_${commitId}"
+
+                    // Additional tag for stage
+                    def additionalTag = "${branchName}_${IMAGE_NAME}"
+
+                    // Push to kpi-website ECR repository for both main and stage branches
+                    sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${tag}"
+                    sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${additionalTag}"
+                    
+                    sh "docker push ${REPOSITORY_URI}:${tag}"
+                    sh "docker push ${REPOSITORY_URI}:${additionalTag}"
+
+                    // Output job ID and Commit ID
+                    echo "Job ID: ${jobId}"
+                    echo "Commit ID: ${commitId}"
                 }
             }
         }
+    }
+}
+
+def getAgentLabel() {
+    if (env.BRANCH_NAME == 'stage') {
+        return 'kpi-web-stage'
+    } else (env.BRANCH_NAME == 'prod') {
+        return 'kpi-web-prod'
     }
 }
