@@ -5,7 +5,7 @@ pipeline {
         AWS_DEFAULT_REGION="ap-south-1"
         IMAGE_REPO_NAME="x-non-prod-ecr"
         IMAGE_NAME="x-app"
-        IMAGE_TAG="latest"
+        IMAGE_TAG="v1.0"
         
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
     }
