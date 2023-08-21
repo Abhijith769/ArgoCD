@@ -30,7 +30,7 @@ pipeline {
         stage('Pushing to ECR') {
             steps {
                 script {
-                    def tag = "${env.BRANCH_NAME}_${IMAGE_TAG}"  // Define the tag based on your requirement
+                    def tag = "${IMAGE_NAME}"  // Define the tag based on your requirement
                     
                     sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${tag}"
                     sh "docker push ${REPOSITORY_URI}:${tag}"
