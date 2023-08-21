@@ -1,45 +1,42 @@
 pipeline {
     agent { node { label 'jenkins-slave' } }
+    
     environment {
-        AWS_ACCOUNT_ID="361752933564"
-        AWS_DEFAULT_REGION="ap-south-1"
-        IMAGE_REPO_NAME="x-non-prod-ecr"
-        IMAGE_NAME="x-app"
-        IMAGE_TAG="v1.0"
-        
-        REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+        AWS_ACCOUNT_ID = "361752933564"
+        AWS_DEFAULT_REGION = "ap-south-1"
+        ECR_REPOSITORY = "x-non-prod-ecr"
+        IMAGE_NAME = "x-app"
+        IMAGE_TAG = "latest"
     }
 
     stages {
-        // Logging into AWS ECR
-        stage('Logging into AWS ECR') {
+        stage('Login to AWS ECR') {
             steps {
                 script {
-                    sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'your-aws-credentials-id', accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                        sh "aws ecr get-login-password --region ${AWS_DEFAULT_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com"
+                    }
                 }
             }
         }
 
-        // Building Docker images
-        stage('Building image') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    dockerImage = docker.build "${IMAGE_NAME}:${IMAGE_TAG}", "--file node-hello/Dockerfile ."
+                    docker.build("${IMAGE_NAME}:${IMAGE_TAG}", "-f path-to-your-Dockerfile .")
                 }
             }
         }
 
-        // Pushing to ECR
-        stage('Pushing to ECR') {
+        stage('Push to ECR') {
             steps {
                 script {
-                    // Push to x-non-prod ECR repository for both main and stage branches
-                    sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${REPOSITORY_URI}:${tag}"
-
-                    sh "docker push ${REPOSITORY_URI}:${tag}"
+                    def repositoryUri = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${ECR_REPOSITORY}:${IMAGE_TAG}"
+                    docker.withRegistry("https://${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com", "ecr:us-east-1:your-aws-credentials-id") {
+                        docker.image("${IMAGE_NAME}:${IMAGE_TAG}").push(repositoryUri)
+                    }
                 }
             }
         }
     }
 }
-
