@@ -1,5 +1,5 @@
 pipeline {
-    agent { node { label 'jenkins-slave' } }
+    agent { label getAgentLabel() }
     environment {
         AWS_ACCOUNT_ID="361752933564"
         AWS_DEFAULT_REGION="ap-south-1"
