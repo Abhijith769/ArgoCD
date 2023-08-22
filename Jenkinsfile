@@ -46,9 +46,11 @@ pipeline {
                     sh "sed -i 's/tag:.*/tag: ${COMMIT_ID}/' ${valuesFilePath}"
                     
                     // Commit and push the changes back to Git
-                    sh "git -C ${HELM_CHART_PATH} add ${valuesFilePath}"
-                    sh "git -C ${HELM_CHART_PATH} commit -m 'Update image tag in Helm Chart'"
-                    sh "git -C ${HELM_CHART_PATH} push origin master"  // Modify 'master' to your branch if necessary
+                    dir(HELM_CHART_PATH) {
+                        sh "git add ${valuesFilePath}"
+                        sh "git commit -m 'Update image tag in Helm Chart'"
+                        sh "git push origin master"  // Modify 'master' to your branch if necessary
+                    }
                 }
             }
         }
