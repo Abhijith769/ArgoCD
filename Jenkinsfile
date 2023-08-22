@@ -22,7 +22,7 @@ pipeline {
         stage('Building image') {
             steps {
                 script {
-                    docker.build "${IMAGE_NAME}:${IMAGE_TAG}", "--file node-hello/Dockerfile ."
+                    docker.build "${IMAGE_NAME}:${IMAGE_TAG}" 
                 }
             }
         }
