@@ -16,5 +16,7 @@ COPY . .
 # Expose port 3000 for the app
 EXPOSE 3000
 
+RUN ls -la
+
 # Run the app
 CMD ["node", "node-hello/index.js"]
