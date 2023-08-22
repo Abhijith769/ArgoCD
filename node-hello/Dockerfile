@@ -2,7 +2,7 @@
 FROM node:14
 
 # Set the working directory to /app
-WORKDIR /app/node-hello
+WORKDIR /app
 
 # Copy the package.json and package-lock.json files to the working directory
 COPY package*.json ./
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the app
-CMD ["node", "index.js"]
+CMD ["node", "/app/node-hello/index.js"]
