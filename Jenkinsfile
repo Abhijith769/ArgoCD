@@ -7,6 +7,7 @@ pipeline {
         IMAGE_NAME = "x-app"
         COMMIT_ID = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+        HELM_CHART_PATH = "helm-chart"
     }
 
     stages {
@@ -39,16 +40,15 @@ pipeline {
         stage('Update Helm Chart Image Tag') {
             steps {
                 script {
-                    def helmChartPath = '/helm-chart'  // Path to your Helm Chart folder in the Git repo
-                    def valuesFilePath = "${helmChartPath}/values.yaml"
+                    def valuesFilePath = "${HELM_CHART_PATH}/values.yaml"
                     
                     // Replace the image tag in the values.yaml file
                     sh "sed -i 's/tag:.*/tag: ${COMMIT_ID}/' ${valuesFilePath}"
                     
                     // Commit and push the changes back to Git
-                    sh "git -C ${helmChartPath} add ${valuesFilePath}"
-                    sh "git -C ${helmChartPath} commit -m 'Update image tag'"
-                    sh "git -C ${helmChartPath} push origin master"  // Modify 'master' to your branch if necessary
+                    sh "git -C ${HELM_CHART_PATH} add ${valuesFilePath}"
+                    sh "git -C ${HELM_CHART_PATH} commit -m 'Update image tag in Helm Chart'"
+                    sh "git -C ${HELM_CHART_PATH} push origin master"  // Modify 'master' to your branch if necessary
                 }
             }
         }
