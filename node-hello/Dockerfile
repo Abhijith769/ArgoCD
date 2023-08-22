@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the app
-CMD ["node", "/app/node-hello/index.js"]
+CMD ["node", "node-hello/index.js"]
