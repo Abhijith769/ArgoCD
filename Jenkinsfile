@@ -40,7 +40,7 @@ pipeline {
             steps {
                 script {
                     def tag = "${IMAGE_NAME}_${COMMIT_ID}"
-                    build job: 'project-x-helm', parameters: [string(name: 'IMAGE_TAG', value: tag)]
+                    parameters: [string(name: 'IMAGE_TAG', value: tag)]
                 }
             }
         }            
