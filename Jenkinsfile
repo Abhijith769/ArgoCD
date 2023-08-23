@@ -56,8 +56,8 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'project-x', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                         sh "git -C ${helmChartPath} add ${valuesFilePath}"
                         sh "git -C ${helmChartPath} commit -m 'Update image tag'"
-                        sh "git -C ${helmChartPath} push -u https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Abhijith769/project-x.git main"
-                }
+                    }   sh "git -C ${helmChartPath} push -u https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Abhijith769/project-x.git main"
+                }   
             }
         }
     }
