@@ -53,6 +53,8 @@ pipeline {
                     sh "sed -i 's/tag:.*/tag: ${IMAGE_NAME}_${COMMIT_ID}/' ${valuesFilePath}"
                     
                     // Commit and push the changes back to Git
+                    sh "git switch main"
+
                     sh "git -C ${helmChartPath} add ${valuesFilePath}"
                     sh "git -C ${helmChartPath} commit -m 'Update image tag'"
                     sh "git -C ${helmChartPath} push -u origin main"  // Modify 'master' to your branch if necessary
