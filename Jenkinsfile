@@ -55,7 +55,8 @@ pipeline {
                     // Commit and push the changes back to Git
                     sh "git -C ${helmChartPath} add ${valuesFilePath}"
                     sh "git -C ${helmChartPath} commit -m 'Update image tag'"
-                    sh "git -C ${helmChartPath} push"  // Modify 'master' to your branch if necessary
+                    sh "git checkout main"
+                    sh "git -C ${helmChartPath} push -u origin main"  // Modify 'master' to your branch if necessary
                 }
             }
         }
