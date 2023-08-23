@@ -58,6 +58,12 @@ pipeline {
                         sh "git -C ${helmChartPath} config --local credential.helper '!f() { echo username=${GIT_USERNAME}; echo password=${GIT_PASSWORD}; }; f'"
                         sh "git -C ${helmChartPath} add ${valuesFilePath}"
                         sh "git -C ${helmChartPath} commit -m 'Update image tag'"
+                        
+                        // Fetch and merge remote changes
+                        sh "git -C ${helmChartPath} fetch origin main"
+                        sh "git -C ${helmChartPath} merge origin/main"
+
+                        // Push the merged changes
                         sh "git -C ${helmChartPath} push origin main"
                     }
                 }
