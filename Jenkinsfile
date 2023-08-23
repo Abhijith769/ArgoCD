@@ -55,7 +55,7 @@ pipeline {
                     // Configure Git to use provided credentials
                     withCredentials([usernamePassword(credentialsId: 'project-x', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                         sh "git -C ${helmChartPath} config --local credential.helper '!f() { echo username=${GIT_USERNAME}; echo password=${GIT_PASSWORD}; }; f'"
-                        sh "git -C ${helmChartPath} pull https://github.com/Abhijith769/project-x.git"
+                        //sh "git -C ${helmChartPath} pull https://github.com/Abhijith769/project-x.git"
                         sh "git -C ${helmChartPath} add ${valuesFilePath}"
                         sh "git -C ${helmChartPath} commit -m 'Update image tag'"
                         
