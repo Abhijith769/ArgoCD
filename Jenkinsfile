@@ -7,6 +7,7 @@ pipeline {
         IMAGE_NAME = "x-app"
         COMMIT_ID = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+        GIT_CREDENTIALS_ID = 'project-x'
     }
 
     stages {
@@ -48,6 +49,9 @@ pipeline {
 
                     def helmChartPath = '/opt/build/workspace/project-x/helm-chart'  // Path to your Helm Chart folder in the Git repo
                     def valuesFilePath = "${helmChartPath}/values.yaml"
+
+                    // Clone the Helm chart repo
+                    git credentialsId: GIT_CREDENTIALS_ID, url: 'https://github.com/Abhijith769/project-x.git'
                     
                     // Replace the image tag in the values.yaml file
                     sh "sed -i 's/tag:.*/tag: ${IMAGE_NAME}_${COMMIT_ID}/' ${valuesFilePath}"
