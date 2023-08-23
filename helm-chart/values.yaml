@@ -8,7 +8,7 @@ image:
   repository: 361752933564.dkr.ecr.ap-south-1.amazonaws.com/x-non-prod-ecr
   pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
-  tag: x-app_9443e62
+  tag: x-app_cb7e97e
 
   #imagePullSecrets:
   #- name: regcredangular
