@@ -52,10 +52,11 @@ pipeline {
                     // Replace the image tag in the values.yaml file
                     sh "sed -i 's/tag:.*/tag: ${IMAGE_NAME}_${COMMIT_ID}/' ${valuesFilePath}"
                     
-                    // Commit and push the changes back to Git
-                    sh "git -C ${helmChartPath} add ${valuesFilePath}"
-                    sh "git -C ${helmChartPath} commit -m 'Update image tag'"
-                    sh "git -C ${helmChartPath} push -u origin main"  // Modify 'master' to your branch if necessary
+                    // Commit and push the changes back to Git using Jenkins credentials
+                    withCredentials([usernamePassword(credentialsId: 'project-x', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        sh "git -C ${helmChartPath} add ${valuesFilePath}"
+                        sh "git -C ${helmChartPath} commit -m 'Update image tag'"
+                        sh "git -C ${helmChartPath} push -u https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Abhijith769/project-x.git main"
                 }
             }
         }
