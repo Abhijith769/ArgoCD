@@ -7,7 +7,6 @@ pipeline {
         IMAGE_NAME = "x-app"
         COMMIT_ID = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
-        GIT_CREDENTIALS_ID = 'project-x'
     }
 
     stages {
