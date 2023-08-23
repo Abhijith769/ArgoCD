@@ -45,8 +45,8 @@ pipeline {
 
                     // List files in the current directory
                     sh 'ls'
-                    
-                    def helmChartPath = './helm-chart'  // Path to your Helm Chart folder in the Git repo
+
+                    def helmChartPath = '/opt/build/workspace/project-x/helm-chart'  // Path to your Helm Chart folder in the Git repo
                     def valuesFilePath = "${helmChartPath}/values.yaml"
                     
                     // Replace the image tag in the values.yaml file
