@@ -64,7 +64,7 @@ pipeline {
                         
 
                         // Push the merged changes
-                        sh "git -C ${helmChartPath} push origin HEAD:main"
+                        sh "git -C ${helmChartPath} push origin main"
                     }
                 }
             }
