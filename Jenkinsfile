@@ -43,7 +43,7 @@ pipeline {
                     def valuesFilePath = "${helmChartPath}/values.yaml"
                     
                     // Replace the image tag in the values.yaml file
-                    sh "sed -i 's/tag:.*/tag: ${IMAGE_NAME}:${COMMIT_ID}/' ${valuesFilePath}"
+                    sh "sed -i 's/tag:.*/tag: ${IMAGE_NAME}_${COMMIT_ID}/' ${valuesFilePath}"
                     
                     // Commit and push the changes back to Git
                     sh "git -C ${helmChartPath} add ${valuesFilePath}"
