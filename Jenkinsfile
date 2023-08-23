@@ -49,9 +49,6 @@ pipeline {
 
                     def helmChartPath = '/opt/build/workspace/project-x/helm-chart'  // Path to your Helm Chart folder in the Git repo
                     def valuesFilePath = "${helmChartPath}/values.yaml"
-
-                    // Clone the Helm chart repo
-                    git credentialsId: GIT_CREDENTIALS_ID, url: 'https://github.com/Abhijith769/project-x.git'
                     
                     // Replace the image tag in the values.yaml file
                     sh "sed -i 's/tag:.*/tag: ${IMAGE_NAME}_${COMMIT_ID}/' ${valuesFilePath}"
@@ -59,7 +56,7 @@ pipeline {
                     // Commit and push the changes back to Git
                     sh "git -C ${helmChartPath} add ${valuesFilePath}"
                     sh "git -C ${helmChartPath} commit -m 'Update image tag'"
-                    sh "git -C ${helmChartPath} push -u origin main"  // Modify 'master' to your branch if necessary
+                    sh "git -C ${helmChartPath} push origin HEAD"  // Modify 'master' to your branch if necessary
                 }
             }
         }
