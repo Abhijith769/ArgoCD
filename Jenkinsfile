@@ -7,6 +7,7 @@ pipeline {
         IMAGE_NAME = "x-app"
         COMMIT_ID = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
         REPOSITORY_URI = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}"
+        GIT_CREDENTIALS_ID = 'project-x'
     }
 
     stages {
@@ -52,11 +53,19 @@ pipeline {
                     // Replace the image tag in the values.yaml file
                     sh "sed -i 's/tag:.*/tag: ${IMAGE_NAME}_${COMMIT_ID}/' ${valuesFilePath}"
                     
-                    // Commit and push the changes back to Git
-                    sh "git -C ${helmChartPath} add ${valuesFilePath}"
-                    sh "git -C ${helmChartPath} commit -m 'Update image tag'"
-                    sh "git checkout main"
-                    sh "git -C ${helmChartPath} push -u origin main"  // Modify 'master' to your branch if necessary
+                    // Configure Git to use provided credentials
+                    withCredentials([usernamePassword(credentialsId: 'project-x', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        sh "git -C ${helmChartPath} config --local credential.helper '!f() { echo username=${GIT_USERNAME}; echo password=${GIT_PASSWORD}; }; f'"
+                        sh "git -C ${helmChartPath} add ${valuesFilePath}"
+                        sh "git -C ${helmChartPath} commit -m 'Update image tag'"
+                        
+                        // Fetch and merge remote changes
+                        sh "git -C ${helmChartPath} fetch origin main"
+                        sh "git -C ${helmChartPath} merge origin/main"
+
+                        // Push the merged changes
+                        sh "git -C ${helmChartPath} push origin main"
+                    }
                 }
             }
         }
