@@ -39,7 +39,14 @@ pipeline {
         stage('Update Helm Chart Image Tag') {
             steps {
                 script {
-                    def helmChartPath = './project-x/helm-chart'  // Path to your Helm Chart folder in the Git repo
+
+                    // Print the working directory
+                    sh 'pwd'
+
+                    // List files in the current directory
+                    sh 'ls'
+                    
+                    def helmChartPath = './helm-chart'  // Path to your Helm Chart folder in the Git repo
                     def valuesFilePath = "${helmChartPath}/values.yaml"
                     
                     // Replace the image tag in the values.yaml file
