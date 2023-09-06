@@ -21,7 +21,7 @@ pipeline {
         stage('Cloning Git repo of application code') {
             steps {
                  
-                 dir ('application_code'){
+                 dir ('/opt/build/workspace/project-x-multibranch_main/application_code'){
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'project-x', url: 'https://github.com/Abhijith769/project-x.git']])
             }
           }        
@@ -30,7 +30,7 @@ pipeline {
         stage('Cloning Git repo of helm temlate') {
             steps {
                  
-                 dir ('/opt/build/workspace/project-x-multibranch_main/helm_templatehelm template'){
+                 dir ('/opt/build/workspace/project-x-multibranch_main/helm_template'){
                     checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'project-x', url: 'https://github.com/Abhijith769/project-x-helm.git']])
             }
           }        
