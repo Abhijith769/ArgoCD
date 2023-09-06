@@ -18,6 +18,24 @@ pipeline {
             }
         }
 
+        stage('Cloning Git repo of application code') {
+            steps {
+                 
+                 dir ('application_code'){
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'project-x', url: 'https://github.com/Abhijith769/project-x.git']])
+            }
+          }        
+        }
+
+        stage('Cloning Git repo of helm temlate') {
+            steps {
+                 
+                 dir ('helm template'){
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'project-x', url: 'https://github.com/Abhijith769/project-x-helm.git']])
+            }
+          }        
+        }
+
         stage('Building image') {
             steps {
                 script {
@@ -46,7 +64,7 @@ pipeline {
                     // List files in the current directory
                     sh 'ls'
 
-                    def helmChartPath = '/opt/build/workspace/project-x-helm/helm-chart'  // Path to your Helm Chart folder in the Git repo
+                    def helmChartPath = '/opt/build/workspace/project-x-multibranch_main/helm_template/helm-chart'  // Path to your Helm Chart folder in the Git repo
                     def valuesFilePath = "${helmChartPath}/values.yaml"
                     
                     // Replace the image tag in the values.yaml file
